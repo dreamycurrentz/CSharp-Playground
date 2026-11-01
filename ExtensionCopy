@@ -1,0 +1,31 @@
+ protected override async Task ExecuteAsync(OleMenuCmdEventArgs e)
+ {
+     string sourceDir = @"";
+     string targetDir = @"";
+
+     // Check if the source directory exists.
+     if (!Directory.Exists(sourceDir))
+     {
+         return;
+     }
+
+     // Checks and creates a new target directory if it doesn't exist.
+     Directory.CreateDirectory(targetDir);
+
+     // Collect all the files in the source directory.
+     var files = Directory.EnumerateFiles(sourceDir, "*", SearchOption.AllDirectories).ToList();
+
+     // Loop through the files and copy them to a new location.
+     foreach (string file in files)
+     {
+         string relativePath = file.Replace(sourceDir, "").TrimStart('\\');
+         string targetFileName = Path.Combine(targetDir, relativePath);
+
+         Directory.CreateDirectory(Path.GetDirectoryName(targetFileName));
+         File.Copy(file, targetFileName, true);
+     }
+
+     await VS.StatusBar.ShowMessageAsync("Files copied!");
+
+     //await VS.MessageBox.ShowWarningAsync("AkashCustomPlugins", "Button clicked");
+ }
